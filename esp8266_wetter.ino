@@ -1,3 +1,141 @@
+//Environment: ESP8266 core (esp8266.github.io/Arduino/) 
+//Hardware: ESP201
+
+#include <dht11.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+
+
+char ssid[] = "Freifunk Erfurt";
+char pass[] = "";
+
+const int led = 13;
+
+dht11 DHT11;
+#define DHT11PIN 4
+
+ESP8266WebServer server(80);
+
+void handleRoot() {
+  digitalWrite(led, 1);
+  server.send(200, "text/plain", "hello from esp8266!");
+  digitalWrite(led, 0);
+}
+
+void handleNotFound(){
+  digitalWrite(led, 1);
+  String message = "File Not Found\n\n";
+  message += "URI: ";
+  message += server.uri();
+  message += "\nMethod: ";
+  message += (server.method() == HTTP_GET)?"GET":"POST";
+  message += "\nArguments: ";
+  message += server.args();
+  message += "\n";
+  for (uint8_t i=0; i<server.args(); i++){
+    message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
+  }
+  server.send(404, "text/plain", message);
+  digitalWrite(led, 0);
+}
+
+void handleWetter(){
+  digitalWrite(led, 1);
+  String message = "Werkstatt\n";
+  message += "Luftfeuchte (%): ";
+  message += (float)DHT11.humidity;
+  message += "\nTemperatur (degC): ";
+  message += (float)DHT11.temperature;
+  message += "\nTaupunkt (degC): ";
+  message += dewPointFast(DHT11.temperature, DHT11.humidity);
+  message += "\n";
+  server.send(200, "text/plain", message);
+  digitalWrite(led, 0);
+
+}
+
+
+void setup()
+{
+
+  pinMode(led, OUTPUT);
+  digitalWrite(led, 0);
+
+  
+  Serial.begin(115200);
+  Serial.println();
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+  WiFi.begin(ssid, pass);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+
+ server.on("/", handleRoot);
+   server.on("/inline", [](){
+    server.send(200, "text/plain", "this works as well");
+  });
+  server.on("/wetter", handleWetter);
+  server.onNotFound(handleNotFound);
+  
+  server.begin();
+  Serial.println("HTTP server started");
+}
+
+void loop()
+{
+  server.handleClient();
+  Serial.println("\n");
+
+  int chk = DHT11.read(DHT11PIN);
+
+  Serial.print("Read sensor: ");
+  switch (chk)
+  {
+    case DHTLIB_OK: 
+    Serial.println("OK"); 
+    break;
+    case DHTLIB_ERROR_CHECKSUM: 
+    Serial.println("Checksum error"); 
+    break;
+    case DHTLIB_ERROR_TIMEOUT: 
+    Serial.println("Time out error"); 
+    break;
+    default: 
+    Serial.println("Unknown error"); 
+    break;
+  }
+
+  Serial.print("Humidity (%): ");
+  Serial.println((float)DHT11.humidity, 2);
+
+  Serial.print("Temperature (°C): ");
+  Serial.println((float)DHT11.temperature, 2);
+
+  Serial.print("Temperature (°F): ");
+  Serial.println(Fahrenheit(DHT11.temperature), 2);
+
+  Serial.print("Temperature (°K): ");
+  Serial.println(Kelvin(DHT11.temperature), 2);
+
+  Serial.print("Dew Point (°C): ");
+  Serial.println(dewPoint(DHT11.temperature, DHT11.humidity));
+
+  Serial.print("Dew PointFast (°C): ");
+  Serial.println(dewPointFast(DHT11.temperature, DHT11.humidity));
+
+  delay(2000);
+}
+
 //Celsius to Fahrenheit conversion
 double Fahrenheit(double celsius)
 {
@@ -50,66 +188,6 @@ double dewPointFast(double celsius, double humidity)
   double temp = (a * celsius) / (b + celsius) + log(humidity*0.01);
   double Td = (b * temp) / (a - temp);
   return Td;
-}
-
-
-#include <dht11.h>
-
-dht11 DHT11;
-
-#define DHT11PIN 4
-
-void setup()
-{
-  Serial.begin(115200);
-  Serial.println("DHT11 TEST PROGRAM ");
-  Serial.print("LIBRARY VERSION: ");
-  Serial.println(DHT11LIB_VERSION);
-  Serial.println();
-}
-
-void loop()
-{
-  Serial.println("\n");
-
-  int chk = DHT11.read(DHT11PIN);
-
-  Serial.print("Read sensor: ");
-  switch (chk)
-  {
-    case DHTLIB_OK: 
-    Serial.println("OK"); 
-    break;
-    case DHTLIB_ERROR_CHECKSUM: 
-    Serial.println("Checksum error"); 
-    break;
-    case DHTLIB_ERROR_TIMEOUT: 
-    Serial.println("Time out error"); 
-    break;
-    default: 
-    Serial.println("Unknown error"); 
-    break;
-  }
-
-  Serial.print("Humidity (%): ");
-  Serial.println((float)DHT11.humidity, 2);
-
-  Serial.print("Temperature (°C): ");
-  Serial.println((float)DHT11.temperature, 2);
-
-  Serial.print("Temperature (°F): ");
-  Serial.println(Fahrenheit(DHT11.temperature), 2);
-
-  Serial.print("Temperature (°K): ");
-  Serial.println(Kelvin(DHT11.temperature), 2);
-
-  Serial.print("Dew Point (°C): ");
-  Serial.println(dewPoint(DHT11.temperature, DHT11.humidity));
-
-  Serial.print("Dew PointFast (°C): ");
-  Serial.println(dewPointFast(DHT11.temperature, DHT11.humidity));
-
-  delay(2000);
 }
 //
 // END OF FILE
