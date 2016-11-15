@@ -4,24 +4,50 @@
 #include <dht11.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
+#include <WiFiUdp.h>
+#include <Ticker.h>
 
+// Diese Werte kommen aus config.h, einfach das include auskommentieren und die Werte hier definieren
+#include "config.h"
+//char ssid[] = ""; //wifi SSID to connect to
+//char pass[] = ""; // wifi Pass
+//IPAddress thechat(x, x, x, x); //collector server
+//unsigned int localPort = xxxx; //local UDP Port
+//String rcon_command = ""; //rcon kommando (user:pass command)
 
-char ssid[] = "Freifunk Erfurt";
-char pass[] = "";
+// Darueber signalisieren wir, ob etwas getan werden soll.
+enum Signal {
+  unknown,
+  DO,
+  DONE
+};
 
+// Darueber signalisieren wir, ob json gepusht werden soll
+Signal pushDataSignal = unknown;
+
+WiFiUDP udp;
 const int led = 13;
-
 dht11 DHT11;
 #define DHT11PIN 4
-
 ESP8266WebServer server(80);
+Ticker theTicker;
 
+//--------------------
+// handleRoot()
+//
+// wird aufgerufen, wenn ein HTTP Get auf / gemacht wird
+//--------------------
 void handleRoot() {
   digitalWrite(led, 1);
   server.send(200, "text/plain", "hello from esp8266!");
   digitalWrite(led, 0);
 }
 
+//--------------------
+// handleNotFound()
+//
+// Wird aufgerufen, wenn ein Get auf eine URL gemacht wird, fuer die sonst kein handle passt
+//--------------------
 void handleNotFound(){
   digitalWrite(led, 1);
   String message = "File Not Found\n\n";
@@ -39,6 +65,11 @@ void handleNotFound(){
   digitalWrite(led, 0);
 }
 
+//------------------
+// handleWetter()
+//
+// Wird aufgerufen, wenn ein HTTP GET auf /wetter gemacht wird
+//------------------
 void handleWetter(){
   digitalWrite(led, 1);
   String message = "Werkstatt\n";
@@ -54,107 +85,63 @@ void handleWetter(){
 
 }
 
+//-------------------
+// startWIFI()
+//
+// Wifi starten, verbinden, ...
+//-------------------
+void startWIFI(void) {
+    Serial.print("Connecting to ");
+    Serial.println(ssid);
+    WiFi.begin(ssid, pass);
 
-void setup()
-{
+    while (WiFi.status() != WL_CONNECTED) {
+        Serial.print(".");
+        delay(500);
+    }
+    Serial.println("");
+    Serial.println("WiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+}
 
-  pinMode(led, OUTPUT);
-  digitalWrite(led, 0);
+//----------------------
+// startUDP()
+//
+// UDP starten ...
+//----------------------
+void startUDP(void) {
+    udp.begin(localPort);
+    Serial.println("UDP started");
+}
 
+//----------------------
+// startHTTP()
+//
+// HTTP starten....
+//----------------------
+void startHTTP(void) {
+    server.on("/", handleRoot);
+    //server.on("/inline", [](){
+    //  server.send(200, "text/plain", "this works as well");
+    //});
+    server.on("/wetter", handleWetter);
+    server.onNotFound(handleNotFound);
   
-  Serial.begin(115200);
-  Serial.println();
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-  WiFi.begin(ssid, pass);
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-
-  Serial.println("");
-  
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-
- server.on("/", handleRoot);
-   server.on("/inline", [](){
-    server.send(200, "text/plain", "this works as well");
-  });
-  server.on("/wetter", handleWetter);
-  server.onNotFound(handleNotFound);
-  
-  server.begin();
-  Serial.println("HTTP server started");
+    server.begin();
+    Serial.println("HTTP server started");
 }
 
-void loop()
-{
-  server.handleClient();
-  Serial.println("\n");
 
-  int chk = DHT11.read(DHT11PIN);
-
-  Serial.print("Read sensor: ");
-  switch (chk)
-  {
-    case DHTLIB_OK: 
-    Serial.println("OK"); 
-    break;
-    case DHTLIB_ERROR_CHECKSUM: 
-    Serial.println("Checksum error"); 
-    break;
-    case DHTLIB_ERROR_TIMEOUT: 
-    Serial.println("Time out error"); 
-    break;
-    default: 
-    Serial.println("Unknown error"); 
-    break;
-  }
-
-  Serial.print("Humidity (%): ");
-  Serial.println((float)DHT11.humidity, 2);
-
-  Serial.print("Temperature (°C): ");
-  Serial.println((float)DHT11.temperature, 2);
-
-  Serial.print("Temperature (°F): ");
-  Serial.println(Fahrenheit(DHT11.temperature), 2);
-
-  Serial.print("Temperature (°K): ");
-  Serial.println(Kelvin(DHT11.temperature), 2);
-
-  Serial.print("Dew Point (°C): ");
-  Serial.println(dewPoint(DHT11.temperature, DHT11.humidity));
-
-  Serial.print("Dew PointFast (°C): ");
-  Serial.println(dewPointFast(DHT11.temperature, DHT11.humidity));
-
-  delay(2000);
+//-----------------------
+// enablePushDataSignal()
+//
+// Wird vom Ticker getriggert.
+// Interrupt-like. So kurz wie moeglich..
+//-----------------------
+void enablePushDataSignal(void) {
+  pushDataSignal = DO;
 }
-
-//Celsius to Fahrenheit conversion
-double Fahrenheit(double celsius)
-{
-  return 1.8 * celsius + 32;
-}
-
-// fast integer version with rounding
-//int Celcius2Fahrenheit(int celcius)
-//{
-//  return (celsius * 18 + 5)/10 + 32;
-//}
-
-
-//Celsius to Kelvin conversion
-double Kelvin(double celsius)
-{
-  return celsius + 273.15;
-}
-
 
 // dewPoint function NOAA
 // reference (1) : http://wahiduddin.net/calc/density_algorithms.htm
@@ -189,6 +176,167 @@ double dewPointFast(double celsius, double humidity)
   double Td = (b * temp) / (a - temp);
   return Td;
 }
+
+//-----------------------------
+// pushData()
+//
+// Daten zur Sammelstelle puschen
+//-----------------------------
+void pushData(void) {
+
+  readDHT11();
+  
+  String message = rcon_command;
+  message += " {\"version\": \"0.3\",";
+  message += "\"id\": \"16fe34d8a2b0\",";
+  message += "\"nickname\": \"Rohnstedt\",";
+  message += "\"sensors\": {";
+  
+  message += "\"humidity\": [{";
+  message += "\"name\": \"Luftfeuchte_Werkstatt\",";
+  message += "\"value\": ";
+  message += (float)DHT11.humidity;
+  message += ",";
+  message += "\"unit\": \"%\"";
+  message += "}],";
+  
+
+  message += "\"temperature\": [{";
+  message += "\"name\": \"Temperatur_Werkstatt\",";
+  message += "\"value\": ";
+  message += (float)DHT11.temperature;
+  message += ",";
+  message += "\"unit\": \"deg\"";
+  message += "}],";
+
+  message += "\"dewpoint\": [{";
+  message += "\"name\": \"Taupunkt_Werkstatt\",";
+  message += "\"value\": ";
+  message += dewPointFast(DHT11.temperature, DHT11.humidity);
+  message += ",";
+  message += "\"unit\": \"deg\"";
+  message += "}]";
+  
+  message += "},";
+  message += "\"system\": {";
+  message += "\"voltage\": 0.0,";
+  message += "\"timestamp\": 1463229197,";
+  message += "\"uptime\": 0,";
+  message += "\"heap\": 0";
+  message += "}}\n";
+  
+  int message_len = message.length() + 1;
+  
+  char msgbuffer[message_len];
+ 
+  message.toCharArray(msgbuffer, message_len);
+    
+  udp.beginPacket(thechat, 9910);
+  udp.write(msgbuffer);
+  udp.endPacket();
+  Serial.println(msgbuffer);
+
+  readUDP();
+}
+
+//----------------------
+// readDHT11()
+//
+// DHT11 Tempsensor auslesen
+//----------------------
+void readDHT11(void) {
+   int chk = DHT11.read(DHT11PIN);
+
+  //Serial.print("Read sensor: ");
+  switch (chk)
+  {
+    case DHTLIB_OK: 
+    //Serial.println("OK"); 
+    break;
+    case DHTLIB_ERROR_CHECKSUM: 
+    Serial.println(" DHT11 Checksum error"); 
+    break;
+    case DHTLIB_ERROR_TIMEOUT: 
+    Serial.println("DHT11 Time out error"); 
+    break;
+    default: 
+    Serial.println("DHT11 Unknown error"); 
+    break;
+  }
+}
+
+//-----------------
+//readUDP()
+//
+// Nachsehen, ob wir etwas aus dem UDP Empfangspuffer lesen können
+//-----------------
+void readUDP() {
+   char rcvbuffer[16];
+  delay(2000);
+  int cb = udp.parsePacket();
+  if (!cb) {
+    //Serial.println("no packet yet");
+  }
+  else {
+    Serial.print("UDP packet received, length=");
+    Serial.println(cb);
+    udp.read(rcvbuffer, 16);
+    Serial.println(rcvbuffer);
+  }
+}
+
+//################################################################
+//################################################################
+
+//--------------------------
+// setup()
+//
+// ARDUINO setup() Routine
+//--------------------------
+void setup()
+{
+
+  pinMode(led, OUTPUT);
+  digitalWrite(led, 0);
+
+  Serial.begin(115200);
+  Serial.println();
+  Serial.println();
+
+  startWIFI();
+  startUDP();
+  startHTTP();
+
+  theTicker.attach(4*60, enablePushDataSignal);
+  // initial einen push triggern
+  pushDataSignal = DO;
+
+}
+
+//----------------------------
+// loop()
+//
+// ARDUINO loop Routine
+//----------------------------
+void loop()
+{
+  //connect wifi if not connected
+  if (WiFi.status() != WL_CONNECTED) {
+    startWIFI();
+  }
+    
+  if (pushDataSignal == DO)
+  {
+    pushData();
+    pushDataSignal = DONE;
+  }
+
+  server.handleClient();
+  yield();
+}
+
+
+
 //
 // END OF FILE
 //
