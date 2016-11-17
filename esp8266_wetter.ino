@@ -24,6 +24,7 @@ enum Signal {
 
 // Darueber signalisieren wir, ob json gepusht werden soll
 Signal pushDataSignal = unknown;
+Signal calcWindspeedSignal = unknown;
 
 WiFiUDP udp;
 const int led = 13;
@@ -31,6 +32,13 @@ dht11 DHT11;
 #define DHT11PIN 4
 ESP8266WebServer server(80);
 Ticker theTicker;
+
+long wind_timeold = 0;
+long wind_timenew = 0;
+long wind_timetemp = 0;
+long wind_period = 0;
+long wind_speed = 0;
+long wind_tmp = 0;
 
 //--------------------
 // handleRoot()
@@ -200,6 +208,13 @@ void pushData(void) {
   message += "\"unit\": \"%\"";
   message += "}],";
   
+  message += "\"windspeed\": [{";
+  message += "\"name\": \"Windgeschwindigkeit_Hof\",";
+  message += "\"value\": ";
+  message += (float)wind_speed;
+  message += ",";
+  message += "\"unit\": \"m/s\"";
+  message += "}],";
 
   message += "\"temperature\": [{";
   message += "\"name\": \"Temperatur_Werkstatt\",";
@@ -285,6 +300,23 @@ void readUDP() {
   }
 }
 
+void windsensorInterrupt(void) {
+   wind_timeold = wind_timenew;
+   wind_timetemp = millis();
+
+  if((wind_timetemp - wind_timeold) <= 1)
+  {
+      //this has been a bounce, since even at huricane
+      //diff between two rising edges is longer than 1ms (~6ms)
+  } else {
+      wind_timenew = wind_timetemp;
+      wind_period = wind_timenew - wind_timeold;
+      //set Flag that we have new data
+      calcWindspeedSignal = DO;
+  }   
+   
+}
+
 //################################################################
 //################################################################
 
@@ -307,9 +339,9 @@ void setup()
   startUDP();
   startHTTP();
 
+  attachInterrupt(0, windsensorInterrupt, FALLING);
+
   theTicker.attach(4*60, enablePushDataSignal);
-  // initial einen push triggern
-  pushDataSignal = DO;
 
 }
 
@@ -328,9 +360,21 @@ void loop()
   if (pushDataSignal == DO)
   {
     pushData();
+    wind_speed = 0;
     pushDataSignal = DONE;
   }
 
+  if (calcWindspeedSignal == DO)
+  {
+    wind_tmp = ((1000/wind_period)+2)/3;
+    
+    if (wind_tmp > wind_speed)
+      wind_speed = wind_tmp;
+      
+    calcWindspeedSignal = DONE;
+    
+    //Serial.println(wind_speed);
+  }
   server.handleClient();
   yield();
 }
