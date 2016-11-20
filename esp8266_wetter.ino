@@ -22,6 +22,9 @@ enum Signal {
   DONE
 };
 
+unsigned int adc = 0;
+float wind_direction = 0.0;
+
 // Darueber signalisieren wir, ob json gepusht werden soll
 Signal pushDataSignal = unknown;
 Signal calcWindspeedSignal = unknown;
@@ -32,13 +35,14 @@ dht11 DHT11;
 #define DHT11PIN 4
 ESP8266WebServer server(80);
 Ticker theTicker;
+Ticker adcTicker;
 
 long wind_timeold = 0;
 long wind_timenew = 0;
 long wind_timetemp = 0;
 long wind_period = 0;
-long wind_speed = 0;
-long wind_tmp = 0;
+float wind_speed = 0;
+float wind_tmp = 0;
 
 //--------------------
 // handleRoot()
@@ -87,6 +91,10 @@ void handleWetter(){
   message += (float)DHT11.temperature;
   message += "\nTaupunkt (degC): ";
   message += dewPointFast(DHT11.temperature, DHT11.humidity);
+  message += "\nWindgeschwindigkeit (m/s):";
+  message += (float)wind_speed;
+  message += "\nWindrichtung (deg):";
+  message += (float)wind_direction;
   message += "\n";
   server.send(200, "text/plain", message);
   digitalWrite(led, 0);
@@ -216,6 +224,14 @@ void pushData(void) {
   message += "\"unit\": \"m/s\"";
   message += "}],";
 
+  message += "\"windvane\": [{";
+  message += "\"name\": \"Windrichtung_Hof\",";
+  message += "\"value\": ";
+  message += (float)wind_direction;
+  message += ",";
+  message += "\"unit\": \"deg\"";
+  message += "}],";
+
   message += "\"temperature\": [{";
   message += "\"name\": \"Temperatur_Werkstatt\",";
   message += "\"value\": ";
@@ -317,6 +333,46 @@ void windsensorInterrupt(void) {
    
 }
 
+void adcInterrupt(void) {
+  adc = (unsigned int) analogRead(A0);
+}
+
+void adc2deg(void) {
+  if(adc >= 968)
+    wind_direction = 22.5; //NNO
+  else if(adc >= 880) 
+    wind_direction = 337.5; //NNW
+  else if(adc >= 767) 
+    wind_direction = 0; //N
+    else if(adc >= 606) 
+    wind_direction = 67.5; //ONO
+    else if(adc >= 479) 
+    wind_direction = 45; //NO
+    else if(adc >= 409) 
+    wind_direction = 112.5; //OSO
+    else if(adc >= 346) 
+    wind_direction = 90; //O
+    else if(adc >= 295) 
+    wind_direction = 292.5; //WNW
+    else if(adc >= 262) 
+    wind_direction = 315; //NW
+    else if(adc >= 238) 
+    wind_direction = 157.5; //SSO
+    else if(adc >= 227) 
+    wind_direction = 135; //SO
+    else if(adc >= 214) 
+    wind_direction = 247.5; //WSW
+    else if(adc >= 205) 
+    wind_direction = 270; //W
+    else if(adc >= 199) 
+    wind_direction = 202.5; //SSW
+    else if(adc >= 192) 
+    wind_direction = 225; //SW
+    else 
+    wind_direction = 180; //S
+
+}
+
 //################################################################
 //################################################################
 
@@ -331,6 +387,8 @@ void setup()
   pinMode(led, OUTPUT);
   digitalWrite(led, 0);
 
+  pinMode(A0, INPUT);
+
   Serial.begin(115200);
   Serial.println();
   Serial.println();
@@ -342,6 +400,7 @@ void setup()
   attachInterrupt(0, windsensorInterrupt, FALLING);
 
   theTicker.attach(4*60, enablePushDataSignal);
+  adcTicker.attach(1, adcInterrupt);
 
 }
 
@@ -360,13 +419,13 @@ void loop()
   if (pushDataSignal == DO)
   {
     pushData();
-    wind_speed = 0;
+    wind_speed = 0.0;
     pushDataSignal = DONE;
   }
 
   if (calcWindspeedSignal == DO)
   {
-    wind_tmp = ((1000/wind_period)+2)/3;
+    wind_tmp = ((1000.0/wind_period)+2.0)/3.0;
     
     if (wind_tmp > wind_speed)
       wind_speed = wind_tmp;
@@ -375,6 +434,8 @@ void loop()
     
     //Serial.println(wind_speed);
   }
+  adc2deg();
+
   server.handleClient();
   yield();
 }
