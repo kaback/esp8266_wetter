@@ -30,7 +30,8 @@ Signal pushDataSignal = unknown;
 Signal calcWindspeedSignal = unknown;
 
 WiFiUDP udp;
-const int led = 13;
+const byte led = 13;
+const byte wspin = 12;
 dht11 DHT11;
 #define DHT11PIN 4
 ESP8266WebServer server(80);
@@ -391,6 +392,7 @@ void setup()
 
   pinMode(A0, INPUT);
 
+
   Serial.begin(115200);
   Serial.println();
   Serial.println();
@@ -398,8 +400,9 @@ void setup()
   startWIFI();
   startUDP();
   startHTTP();
-
-  attachInterrupt(0, windsensorInterrupt, FALLING);
+  
+  pinMode(wspin, INPUT_PULLUP);
+  attachInterrupt(wspin, windsensorInterrupt, FALLING);
 
   theTicker.attach(10, enablePushDataSignal);
   adcTicker.attach(1, adcInterrupt);
