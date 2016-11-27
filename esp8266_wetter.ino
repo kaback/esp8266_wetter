@@ -37,10 +37,9 @@ ESP8266WebServer server(80);
 Ticker theTicker;
 Ticker adcTicker;
 
-long wind_timeold = 0;
-long wind_timenew = 0;
-long wind_timetemp = 0;
-long wind_period = 0;
+unsigned long wind_time = 0;
+unsigned long wind_timetemp = 0;
+unsigned long wind_period = 0;
 float wind_speed = 0;
 float wind_tmp = 0;
 
@@ -109,6 +108,8 @@ void handleWetter(){
 void startWIFI(void) {
     Serial.print("Connecting to ");
     Serial.println(ssid);
+
+    WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, pass);
 
     while (WiFi.status() != WL_CONNECTED) {
@@ -317,20 +318,21 @@ void readUDP() {
 }
 
 void windsensorInterrupt(void) {
-   wind_timeold = wind_timenew;
-   wind_timetemp = millis();
+  //Zeit merken
+  wind_timetemp = millis();
 
-  if((wind_timetemp - wind_timeold) <= 1)
+  if((wind_timetemp - wind_time) <= 3)
   {
       //this has been a bounce, since even at huricane
       //diff between two rising edges is longer than 1ms (~6ms)
-  } else {
-      wind_timenew = wind_timetemp;
-      wind_period = wind_timenew - wind_timeold;
-      //set Flag that we have new data
-      calcWindspeedSignal = DO;
-  }   
-   
+      return;
+  }
+  
+  wind_period = wind_timetemp - wind_time;
+  wind_time = wind_timetemp;
+      
+  //set Flag that we have new data
+  calcWindspeedSignal = DO;
 }
 
 void adcInterrupt(void) {
@@ -399,7 +401,7 @@ void setup()
 
   attachInterrupt(0, windsensorInterrupt, FALLING);
 
-  theTicker.attach(4*60, enablePushDataSignal);
+  theTicker.attach(10, enablePushDataSignal);
   adcTicker.attach(1, adcInterrupt);
 
 }
