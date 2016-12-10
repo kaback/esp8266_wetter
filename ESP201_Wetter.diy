@@ -295,24 +295,6 @@
       <layer>_1</layer>
     </org.diylc.components.connectivity.SolderPad>
     <org.diylc.components.connectivity.SolderPad>
-      <name>Pad12</name>
-      <size reference="../../org.diylc.components.connectivity.SolderPad/size"/>
-      <color reference="../../org.diylc.components.connectivity.SolderPad/color"/>
-      <point x="5.3" y="5.1"/>
-      <type>ROUND</type>
-      <holeSize reference="../../org.diylc.components.connectivity.SolderPad/holeSize"/>
-      <layer>_1</layer>
-    </org.diylc.components.connectivity.SolderPad>
-    <org.diylc.components.connectivity.SolderPad>
-      <name>Pad13</name>
-      <size reference="../../org.diylc.components.connectivity.SolderPad/size"/>
-      <color reference="../../org.diylc.components.connectivity.SolderPad/color"/>
-      <point x="5.3" y="3.8"/>
-      <type>ROUND</type>
-      <holeSize reference="../../org.diylc.components.connectivity.SolderPad/holeSize"/>
-      <layer>_1</layer>
-    </org.diylc.components.connectivity.SolderPad>
-    <org.diylc.components.connectivity.SolderPad>
       <name>Pad14</name>
       <size reference="../../org.diylc.components.connectivity.SolderPad/size"/>
       <color reference="../../org.diylc.components.connectivity.SolderPad/color"/>
@@ -353,24 +335,6 @@
       <size reference="../../org.diylc.components.connectivity.SolderPad/size"/>
       <color reference="../../org.diylc.components.connectivity.SolderPad/color"/>
       <point x="6.9" y="5.0"/>
-      <type>ROUND</type>
-      <holeSize reference="../../org.diylc.components.connectivity.SolderPad/holeSize"/>
-      <layer>_1</layer>
-    </org.diylc.components.connectivity.SolderPad>
-    <org.diylc.components.connectivity.SolderPad>
-      <name>Pad19</name>
-      <size reference="../../org.diylc.components.connectivity.SolderPad/size"/>
-      <color reference="../../org.diylc.components.connectivity.SolderPad/color"/>
-      <point x="7.0" y="5.1"/>
-      <type>ROUND</type>
-      <holeSize reference="../../org.diylc.components.connectivity.SolderPad/holeSize"/>
-      <layer>_1</layer>
-    </org.diylc.components.connectivity.SolderPad>
-    <org.diylc.components.connectivity.SolderPad>
-      <name>Pad20</name>
-      <size reference="../../org.diylc.components.connectivity.SolderPad/size"/>
-      <color reference="../../org.diylc.components.connectivity.SolderPad/color"/>
-      <point x="7.0" y="4.0"/>
       <type>ROUND</type>
       <holeSize reference="../../org.diylc.components.connectivity.SolderPad/holeSize"/>
       <layer>_1</layer>
@@ -570,6 +534,62 @@
       <point x="5.1" y="4.0"/>
       <value>Kontaktstift</value>
     </org.diylc.components.connectivity.Eyelet>
+    <org.diylc.components.connectivity.SolderPad>
+      <name>Pad12</name>
+      <size>
+        <value>0.09</value>
+        <unit class="org.diylc.core.measures.SizeUnit">in</unit>
+      </size>
+      <color>
+        <red>0</red>
+        <green>0</green>
+        <blue>0</blue>
+        <alpha>255</alpha>
+      </color>
+      <point x="5.5" y="5.0"/>
+      <type>ROUND</type>
+      <holeSize>
+        <value>0.8</value>
+        <unit class="org.diylc.core.measures.SizeUnit">mm</unit>
+      </holeSize>
+      <layer>_1</layer>
+    </org.diylc.components.connectivity.SolderPad>
+    <org.diylc.components.connectivity.SolderPad>
+      <name>Pad13</name>
+      <size reference="../../org.diylc.components.connectivity.SolderPad[26]/size"/>
+      <color reference="../../org.diylc.components.connectivity.SolderPad[26]/color"/>
+      <point x="5.5" y="5.1"/>
+      <type>ROUND</type>
+      <holeSize reference="../../org.diylc.components.connectivity.SolderPad[26]/holeSize"/>
+      <layer>_1</layer>
+    </org.diylc.components.connectivity.SolderPad>
+    <org.diylc.components.connectivity.SolderPad>
+      <name>Pad19</name>
+      <size reference="../../org.diylc.components.connectivity.SolderPad[26]/size"/>
+      <color reference="../../org.diylc.components.connectivity.SolderPad[26]/color"/>
+      <point x="7.0" y="5.0"/>
+      <type>ROUND</type>
+      <holeSize reference="../../org.diylc.components.connectivity.SolderPad[26]/holeSize"/>
+      <layer>_1</layer>
+    </org.diylc.components.connectivity.SolderPad>
+    <org.diylc.components.connectivity.SolderPad>
+      <name>Pad20</name>
+      <size reference="../../org.diylc.components.connectivity.SolderPad[26]/size"/>
+      <color reference="../../org.diylc.components.connectivity.SolderPad[26]/color"/>
+      <point x="7.0" y="5.1"/>
+      <type>ROUND</type>
+      <holeSize reference="../../org.diylc.components.connectivity.SolderPad[26]/holeSize"/>
+      <layer>_1</layer>
+    </org.diylc.components.connectivity.SolderPad>
+    <org.diylc.components.connectivity.SolderPad>
+      <name>Pad30</name>
+      <size reference="../../org.diylc.components.connectivity.SolderPad[26]/size"/>
+      <color reference="../../org.diylc.components.connectivity.SolderPad[26]/color"/>
+      <point x="7.6" y="3.9"/>
+      <type>ROUND</type>
+      <holeSize reference="../../org.diylc.components.connectivity.SolderPad[26]/holeSize"/>
+      <layer>_1</layer>
+    </org.diylc.components.connectivity.SolderPad>
     <org.diylc.components.semiconductors.DIL__IC>
       <name>IC1</name>
       <alpha>127</alpha>
@@ -707,39 +727,11 @@
       <flipStanding>false</flipStanding>
     </org.diylc.components.connectivity.Jumper>
     <org.diylc.components.connectivity.Jumper>
-      <name>J3</name>
-      <alpha>127</alpha>
-      <points>
-        <java.awt.Point x="5.3" y="5.1"/>
-        <java.awt.Point x="5.3" y="3.8"/>
-      </points>
-      <bodyColor reference="../../org.diylc.components.connectivity.TraceCut/fillColor"/>
-      <borderColor reference="../../org.diylc.components.connectivity.SolderPad/color"/>
-      <labelColor reference="../../org.diylc.components.connectivity.SolderPad/color"/>
-      <leadColor reference="../../org.diylc.components.connectivity.Jumper/leadColor"/>
-      <display>NAME</display>
-      <flipStanding>false</flipStanding>
-    </org.diylc.components.connectivity.Jumper>
-    <org.diylc.components.connectivity.Jumper>
       <name>J4</name>
       <alpha>127</alpha>
       <points>
         <java.awt.Point x="6.9" y="5.0"/>
         <java.awt.Point x="6.9" y="4.0"/>
-      </points>
-      <bodyColor reference="../../org.diylc.components.connectivity.TraceCut/fillColor"/>
-      <borderColor reference="../../org.diylc.components.connectivity.SolderPad/color"/>
-      <labelColor reference="../../org.diylc.components.connectivity.SolderPad/color"/>
-      <leadColor reference="../../org.diylc.components.connectivity.Jumper/leadColor"/>
-      <display>NAME</display>
-      <flipStanding>false</flipStanding>
-    </org.diylc.components.connectivity.Jumper>
-    <org.diylc.components.connectivity.Jumper>
-      <name>J5</name>
-      <alpha>127</alpha>
-      <points>
-        <java.awt.Point x="7.0" y="5.1"/>
-        <java.awt.Point x="7.0" y="4.0"/>
       </points>
       <bodyColor reference="../../org.diylc.components.connectivity.TraceCut/fillColor"/>
       <borderColor reference="../../org.diylc.components.connectivity.SolderPad/color"/>
@@ -847,6 +839,44 @@
       <power>HALF</power>
       <colorCode>_5_BAND</colorCode>
     </org.diylc.components.passive.Resistor>
+    <org.diylc.components.connectivity.Jumper>
+      <name>J3</name>
+      <alpha>127</alpha>
+      <points>
+        <java.awt.Point x="5.5" y="5.0"/>
+        <java.awt.Point x="5.5" y="5.1"/>
+      </points>
+      <bodyColor>
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+        <alpha>255</alpha>
+      </bodyColor>
+      <borderColor reference="../../org.diylc.components.connectivity.SolderPad[26]/color"/>
+      <labelColor reference="../../org.diylc.components.connectivity.SolderPad[26]/color"/>
+      <leadColor>
+        <red>0</red>
+        <green>0</green>
+        <blue>255</blue>
+        <alpha>255</alpha>
+      </leadColor>
+      <display>NAME</display>
+      <flipStanding>false</flipStanding>
+    </org.diylc.components.connectivity.Jumper>
+    <org.diylc.components.connectivity.Jumper>
+      <name>J5</name>
+      <alpha>127</alpha>
+      <points>
+        <java.awt.Point x="7.0" y="5.0"/>
+        <java.awt.Point x="7.0" y="5.1"/>
+      </points>
+      <bodyColor reference="../../org.diylc.components.connectivity.Jumper[5]/bodyColor"/>
+      <borderColor reference="../../org.diylc.components.connectivity.SolderPad[26]/color"/>
+      <labelColor reference="../../org.diylc.components.connectivity.SolderPad[26]/color"/>
+      <leadColor reference="../../org.diylc.components.connectivity.Jumper[5]/leadColor"/>
+      <display>NAME</display>
+      <flipStanding>false</flipStanding>
+    </org.diylc.components.connectivity.Jumper>
     <org.diylc.components.misc.Label>
       <name>L1</name>
       <point x="8.0" y="4.0"/>
@@ -854,7 +884,11 @@
       <font>
         <attributes>
           <entry>
-            <awt-text-attribute>width</awt-text-attribute>
+            <awt-text-attribute>posture</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
+            <awt-text-attribute>tracking</awt-text-attribute>
             <null/>
           </entry>
           <entry>
@@ -866,24 +900,20 @@
             <null/>
           </entry>
           <entry>
+            <awt-text-attribute>width</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
+            <awt-text-attribute>family</awt-text-attribute>
+            <string>Tahoma</string>
+          </entry>
+          <entry>
             <awt-text-attribute>transform</awt-text-attribute>
             <null/>
           </entry>
           <entry>
             <awt-text-attribute>weight</awt-text-attribute>
             <float>2.0</float>
-          </entry>
-          <entry>
-            <awt-text-attribute>tracking</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>posture</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>family</awt-text-attribute>
-            <string>Tahoma</string>
           </entry>
         </attributes>
       </font>
@@ -900,7 +930,11 @@
       <font>
         <attributes>
           <entry>
-            <awt-text-attribute>width</awt-text-attribute>
+            <awt-text-attribute>posture</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
+            <awt-text-attribute>tracking</awt-text-attribute>
             <null/>
           </entry>
           <entry>
@@ -912,24 +946,20 @@
             <null/>
           </entry>
           <entry>
+            <awt-text-attribute>width</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
+            <awt-text-attribute>family</awt-text-attribute>
+            <string>Tahoma</string>
+          </entry>
+          <entry>
             <awt-text-attribute>transform</awt-text-attribute>
             <null/>
           </entry>
           <entry>
             <awt-text-attribute>weight</awt-text-attribute>
             <float>2.0</float>
-          </entry>
-          <entry>
-            <awt-text-attribute>tracking</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>posture</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>family</awt-text-attribute>
-            <string>Tahoma</string>
           </entry>
         </attributes>
       </font>
@@ -946,7 +976,11 @@
       <font>
         <attributes>
           <entry>
-            <awt-text-attribute>width</awt-text-attribute>
+            <awt-text-attribute>posture</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
+            <awt-text-attribute>tracking</awt-text-attribute>
             <null/>
           </entry>
           <entry>
@@ -958,24 +992,20 @@
             <null/>
           </entry>
           <entry>
+            <awt-text-attribute>width</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
+            <awt-text-attribute>family</awt-text-attribute>
+            <string>Tahoma</string>
+          </entry>
+          <entry>
             <awt-text-attribute>transform</awt-text-attribute>
             <null/>
           </entry>
           <entry>
             <awt-text-attribute>weight</awt-text-attribute>
             <float>2.0</float>
-          </entry>
-          <entry>
-            <awt-text-attribute>tracking</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>posture</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>family</awt-text-attribute>
-            <string>Tahoma</string>
           </entry>
         </attributes>
       </font>
@@ -992,7 +1022,11 @@
       <font>
         <attributes>
           <entry>
-            <awt-text-attribute>width</awt-text-attribute>
+            <awt-text-attribute>posture</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
+            <awt-text-attribute>tracking</awt-text-attribute>
             <null/>
           </entry>
           <entry>
@@ -1004,24 +1038,20 @@
             <null/>
           </entry>
           <entry>
+            <awt-text-attribute>width</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
+            <awt-text-attribute>family</awt-text-attribute>
+            <string>Tahoma</string>
+          </entry>
+          <entry>
             <awt-text-attribute>transform</awt-text-attribute>
             <null/>
           </entry>
           <entry>
             <awt-text-attribute>weight</awt-text-attribute>
             <float>2.0</float>
-          </entry>
-          <entry>
-            <awt-text-attribute>tracking</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>posture</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>family</awt-text-attribute>
-            <string>Tahoma</string>
           </entry>
         </attributes>
       </font>
@@ -1038,7 +1068,11 @@
       <font>
         <attributes>
           <entry>
-            <awt-text-attribute>width</awt-text-attribute>
+            <awt-text-attribute>posture</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
+            <awt-text-attribute>tracking</awt-text-attribute>
             <null/>
           </entry>
           <entry>
@@ -1050,24 +1084,20 @@
             <null/>
           </entry>
           <entry>
+            <awt-text-attribute>width</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
+            <awt-text-attribute>family</awt-text-attribute>
+            <string>Tahoma</string>
+          </entry>
+          <entry>
             <awt-text-attribute>transform</awt-text-attribute>
             <null/>
           </entry>
           <entry>
             <awt-text-attribute>weight</awt-text-attribute>
             <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>tracking</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>posture</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>family</awt-text-attribute>
-            <string>Tahoma</string>
           </entry>
         </attributes>
       </font>
@@ -1095,7 +1125,11 @@
       <font>
         <attributes>
           <entry>
-            <awt-text-attribute>width</awt-text-attribute>
+            <awt-text-attribute>posture</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
+            <awt-text-attribute>tracking</awt-text-attribute>
             <null/>
           </entry>
           <entry>
@@ -1107,24 +1141,20 @@
             <null/>
           </entry>
           <entry>
+            <awt-text-attribute>width</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
+            <awt-text-attribute>family</awt-text-attribute>
+            <string>Tahoma</string>
+          </entry>
+          <entry>
             <awt-text-attribute>transform</awt-text-attribute>
             <null/>
           </entry>
           <entry>
             <awt-text-attribute>weight</awt-text-attribute>
             <float>2.0</float>
-          </entry>
-          <entry>
-            <awt-text-attribute>tracking</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>posture</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>family</awt-text-attribute>
-            <string>Tahoma</string>
           </entry>
         </attributes>
       </font>
@@ -1146,7 +1176,11 @@
       <font>
         <attributes>
           <entry>
-            <awt-text-attribute>width</awt-text-attribute>
+            <awt-text-attribute>posture</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
+            <awt-text-attribute>tracking</awt-text-attribute>
             <null/>
           </entry>
           <entry>
@@ -1158,24 +1192,20 @@
             <null/>
           </entry>
           <entry>
+            <awt-text-attribute>width</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
+            <awt-text-attribute>family</awt-text-attribute>
+            <string>Tahoma</string>
+          </entry>
+          <entry>
             <awt-text-attribute>transform</awt-text-attribute>
             <null/>
           </entry>
           <entry>
             <awt-text-attribute>weight</awt-text-attribute>
             <float>2.0</float>
-          </entry>
-          <entry>
-            <awt-text-attribute>tracking</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>posture</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>family</awt-text-attribute>
-            <string>Tahoma</string>
           </entry>
         </attributes>
       </font>
