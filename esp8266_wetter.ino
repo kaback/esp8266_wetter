@@ -1,7 +1,7 @@
 //Environment: ESP8266 core (esp8266.github.io/Arduino/) 
 //Hardware: ESP201
 
-#include <dht11.h>
+
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <WiFiUdp.h>
@@ -22,25 +22,24 @@ enum Signal {
   DONE
 };
 
-unsigned int adc = 0;
+volatile unsigned int adc = 0;
 float wind_direction = 0.0;
 
 // Darueber signalisieren wir, ob json gepusht werden soll
-Signal pushDataSignal = unknown;
-Signal calcWindspeedSignal = unknown;
+volatile Signal pushDataSignal = unknown;
+volatile Signal calcWindspeedSignal = unknown;
 
 WiFiUDP udp;
 const byte led = 13;
 const byte wspin = 12;
-dht11 DHT11;
-#define DHT11PIN 4
+
 ESP8266WebServer server(80);
 Ticker theTicker;
 Ticker adcTicker;
 
-unsigned long wind_time = 0;
-unsigned long wind_timetemp = 0;
-unsigned long wind_period = 0;
+volatile unsigned long wind_time = 0;
+volatile unsigned long wind_timetemp = 0;
+volatile unsigned long wind_period = 0;
 float wind_speed = 0;
 float wind_tmp = 0;
 
@@ -84,13 +83,7 @@ void handleNotFound(){
 //------------------
 void handleWetter(){
   digitalWrite(led, 1);
-  String message = "Werkstatt\n";
-  message += "Luftfeuchte (%): ";
-  message += (float)DHT11.humidity;
-  message += "\nTemperatur (degC): ";
-  message += (float)DHT11.temperature;
-  message += "\nTaupunkt (degC): ";
-  message += dewPointFast(DHT11.temperature, DHT11.humidity);
+  String message = "Waidberg\n";
   message += "\nWindgeschwindigkeit (m/s):";
   message += (float)wind_speed;
   message += "\nWindrichtung (deg):";
@@ -161,65 +154,21 @@ void enablePushDataSignal(void) {
   pushDataSignal = DO;
 }
 
-// dewPoint function NOAA
-// reference (1) : http://wahiduddin.net/calc/density_algorithms.htm
-// reference (2) : http://www.colorado.edu/geography/weather_station/Geog_site/about.htm
-//
-double dewPoint(double celsius, double humidity)
-{
-  // (1) Saturation Vapor Pressure = ESGG(T)
-  double RATIO = 373.15 / (273.15 + celsius);
-  double RHS = -7.90298 * (RATIO - 1);
-  RHS += 5.02808 * log10(RATIO);
-  RHS += -1.3816e-7 * (pow(10, (11.344 * (1 - 1/RATIO ))) - 1) ;
-  RHS += 8.1328e-3 * (pow(10, (-3.49149 * (RATIO - 1))) - 1) ;
-  RHS += log10(1013.246);
-
-        // factor -3 is to adjust units - Vapor Pressure SVP * humidity
-  double VP = pow(10, RHS - 3) * humidity;
-
-        // (2) DEWPOINT = F(Vapor Pressure)
-  double T = log(VP/0.61078);   // temp var
-  return (241.88 * T) / (17.558 - T);
-}
-
-// delta max = 0.6544 wrt dewPoint()
-// 6.9 x faster than dewPoint()
-// reference: http://en.wikipedia.org/wiki/Dew_point
-double dewPointFast(double celsius, double humidity)
-{
-  double a = 17.271;
-  double b = 237.7;
-  double temp = (a * celsius) / (b + celsius) + log(humidity*0.01);
-  double Td = (b * temp) / (a - temp);
-  return Td;
-}
-
 //-----------------------------
 // pushData()
 //
 // Daten zur Sammelstelle puschen
 //-----------------------------
 void pushData(void) {
-
-  readDHT11();
   
   String message = rcon_command;
   message += " {\"version\": \"0.3\",";
   message += "\"id\": \"16fe34d8a2b0\",";
-  message += "\"nickname\": \"Rohnstedt\",";
+  message += "\"nickname\": \"Waidberg\",";
   message += "\"sensors\": {";
   
-  message += "\"humidity\": [{";
-  message += "\"name\": \"Luftfeuchte_Werkstatt\",";
-  message += "\"value\": ";
-  message += (float)DHT11.humidity;
-  message += ",";
-  message += "\"unit\": \"%\"";
-  message += "}],";
-  
   message += "\"windspeed\": [{";
-  message += "\"name\": \"Windgeschwindigkeit_Hof\",";
+  message += "\"name\": \"Windgeschwindigkeit\",";
   message += "\"value\": ";
   message += (float)wind_speed;
   message += ",";
@@ -227,33 +176,19 @@ void pushData(void) {
   message += "}],";
 
   message += "\"windvane\": [{";
-  message += "\"name\": \"Windrichtung_Hof\",";
+  message += "\"name\": \"Windrichtung\",";
   message += "\"value\": ";
   message += (float)wind_direction;
   message += ",";
   message += "\"unit\": \"deg\"";
   message += "}],";
-
-  message += "\"temperature\": [{";
-  message += "\"name\": \"Temperatur_Werkstatt\",";
-  message += "\"value\": ";
-  message += (float)DHT11.temperature;
-  message += ",";
-  message += "\"unit\": \"deg\"";
-  message += "}],";
-
-  message += "\"dewpoint\": [{";
-  message += "\"name\": \"Taupunkt_Werkstatt\",";
-  message += "\"value\": ";
-  message += dewPointFast(DHT11.temperature, DHT11.humidity);
-  message += ",";
-  message += "\"unit\": \"deg\"";
-  message += "}]";
   
   message += "},";
   message += "\"system\": {";
-  message += "\"voltage\": 0.0,";
-  message += "\"timestamp\": 1463229197,";
+  message += "\"voltage\": ";
+  message += adc;
+  message += ",";
+  message += "\"timestamp\": 0,";
   message += "\"uptime\": 0,";
   message += "\"heap\": 0";
   message += "}}\n";
@@ -272,31 +207,6 @@ void pushData(void) {
   readUDP();
 }
 
-//----------------------
-// readDHT11()
-//
-// DHT11 Tempsensor auslesen
-//----------------------
-void readDHT11(void) {
-   int chk = DHT11.read(DHT11PIN);
-
-  //Serial.print("Read sensor: ");
-  switch (chk)
-  {
-    case DHTLIB_OK: 
-    //Serial.println("OK"); 
-    break;
-    case DHTLIB_ERROR_CHECKSUM: 
-    Serial.println(" DHT11 Checksum error"); 
-    break;
-    case DHTLIB_ERROR_TIMEOUT: 
-    Serial.println("DHT11 Time out error"); 
-    break;
-    default: 
-    Serial.println("DHT11 Unknown error"); 
-    break;
-  }
-}
 
 //-----------------
 //readUDP()
