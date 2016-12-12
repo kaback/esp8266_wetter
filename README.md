@@ -7,4 +7,5 @@ ESP8266 Wetter PoC
 Tools used:
 - Arduino Core for ESP8266: https://github.com/esp8266/Arduino
 - DIY Layout Creator: https://github.com/bancika/diy-layout-creator/releases
+- Complex Numbers Library: https://github.com/RobTillaart/Arduino/tree/master/libraries/Complex
 
