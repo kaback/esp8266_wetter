@@ -3,9 +3,11 @@
 
 
 #include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
 #include <WiFiUdp.h>
 #include <Ticker.h>
+#include "complexx.h"
+#include <math.h>
+
 
 // Diese Werte kommen aus config.h, einfach das include auskommentieren und die Werte hier definieren
 #include "config.h"
@@ -22,76 +24,39 @@ enum Signal {
   DONE
 };
 
-volatile unsigned int adc = 0;
-float wind_direction = 0.0;
-
 // Darueber signalisieren wir, ob json gepusht werden soll
 volatile Signal pushDataSignal = unknown;
 volatile Signal calcWindspeedSignal = unknown;
+
+volatile unsigned int adc = 0;
 
 WiFiUDP udp;
 const byte led = 13;
 const byte wspin = 12;
 
-ESP8266WebServer server(80);
 Ticker theTicker;
 Ticker adcTicker;
 
 volatile unsigned long wind_time = 0;
 volatile unsigned long wind_timetemp = 0;
 volatile unsigned long wind_period = 0;
-float wind_speed = 0;
-float wind_tmp = 0;
+float wind_speed_max = 0;
+float wind_speed_gmw = 0;
+float wind_aktuell = 0;
+float wind_direction = 0.0;
 
-//--------------------
-// handleRoot()
-//
-// wird aufgerufen, wenn ein HTTP Get auf / gemacht wird
-//--------------------
-void handleRoot() {
-  digitalWrite(led, 1);
-  server.send(200, "text/plain", "hello from esp8266!");
-  digitalWrite(led, 0);
-}
+const double tau = 2*M_PI;
+Complex j(0.0, 1.0);
+Complex j_tau = j * tau / 360;
+Complex base = j_tau.c_exp();
+Complex total(0,0);
 
-//--------------------
-// handleNotFound()
-//
-// Wird aufgerufen, wenn ein Get auf eine URL gemacht wird, fuer die sonst kein handle passt
-//--------------------
-void handleNotFound(){
-  digitalWrite(led, 1);
-  String message = "File Not Found\n\n";
-  message += "URI: ";
-  message += server.uri();
-  message += "\nMethod: ";
-  message += (server.method() == HTTP_GET)?"GET":"POST";
-  message += "\nArguments: ";
-  message += server.args();
-  message += "\n";
-  for (uint8_t i=0; i<server.args(); i++){
-    message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
-  }
-  server.send(404, "text/plain", message);
-  digitalWrite(led, 0);
-}
-
-//------------------
-// handleWetter()
-//
-// Wird aufgerufen, wenn ein HTTP GET auf /wetter gemacht wird
-//------------------
-void handleWetter(){
-  digitalWrite(led, 1);
-  String message = "Waidberg\n";
-  message += "\nWindgeschwindigkeit (m/s):";
-  message += (float)wind_speed;
-  message += "\nWindrichtung (deg):";
-  message += (float)wind_direction;
-  message += "\n";
-  server.send(200, "text/plain", message);
-  digitalWrite(led, 0);
-
+void wind_average(const double wind_direction)
+{
+  // Winkel in komplexe zahl (exponentialform) umrechen,
+  // gleitend Mittelwert bilden
+  Complex new_value = one * base.c_pow(wind_direction);
+  total = total - total/40 + new_value/40;
 }
 
 //-------------------
@@ -126,24 +91,6 @@ void startUDP(void) {
     Serial.println("UDP started");
 }
 
-//----------------------
-// startHTTP()
-//
-// HTTP starten....
-//----------------------
-void startHTTP(void) {
-    server.on("/", handleRoot);
-    //server.on("/inline", [](){
-    //  server.send(200, "text/plain", "this works as well");
-    //});
-    server.on("/wetter", handleWetter);
-    server.onNotFound(handleNotFound);
-  
-    server.begin();
-    Serial.println("HTTP server started");
-}
-
-
 //-----------------------
 // enablePushDataSignal()
 //
@@ -170,7 +117,23 @@ void pushData(void) {
   message += "\"windspeed\": [{";
   message += "\"name\": \"Windgeschwindigkeit\",";
   message += "\"value\": ";
-  message += (float)wind_speed;
+  message += (float)wind_speed_max;
+  message += ",";
+  message += "\"unit\": \"m/s\"";
+  message += "},";//],";
+
+  message += "{";
+  message += "\"name\": \"Windgeschwindigkeit(gmw20)\",";
+  message += "\"value\": ";
+  // Der gleitende Mittelwert fuer die Windgeschwindigkeit
+  // funktioniert nur wenn auch wind ist. Mit Windgeschwindigkeiten
+  // von 0 kann er noch nicht umgehen.
+  if (wind_speed_max == 0)
+  {
+    message += 0;
+  } else {
+    message += (float)wind_speed_gmw;
+  }
   message += ",";
   message += "\"unit\": \"m/s\"";
   message += "}],";
@@ -179,6 +142,20 @@ void pushData(void) {
   message += "\"name\": \"Windrichtung\",";
   message += "\"value\": ";
   message += (float)wind_direction;
+  message += ",";
+  message += "\"unit\": \"deg\"";
+  message += "},"; //],";
+
+  message += "{";
+  message += "\"name\": \"Windrichtung(gmw40)\",";
+  message += "\"value\": ";
+  
+  double tmp = (total.c_logn(base)).real();
+  if(tmp < 0)
+  {
+      tmp = 360 + tmp;
+  }
+  message += tmp;
   message += ",";
   message += "\"unit\": \"deg\"";
   message += "}],";
@@ -248,7 +225,10 @@ void windsensorInterrupt(void) {
 
 void adcInterrupt(void) {
   adc = (unsigned int) analogRead(A0);
+  adc2deg();
+  wind_average(wind_direction);
 }
+
 
 void adc2deg(void) {
   if(adc >= 968)
@@ -309,13 +289,13 @@ void setup()
 
   startWIFI();
   startUDP();
-  startHTTP();
   
   pinMode(wspin, INPUT_PULLUP);
   attachInterrupt(wspin, windsensorInterrupt, FALLING);
 
   theTicker.attach(10, enablePushDataSignal);
   adcTicker.attach(1, adcInterrupt);
+  
 
 }
 
@@ -334,24 +314,24 @@ void loop()
   if (pushDataSignal == DO)
   {
     pushData();
-    wind_speed = 0.0;
+    wind_speed_max = 0.0;
+    //wind_aktuell = 0.0;
     pushDataSignal = DONE;
   }
 
   if (calcWindspeedSignal == DO)
   {
-    wind_tmp = ((1000.0/wind_period)+2.0)/3.0;
+    wind_aktuell = ((1000.0/wind_period)+2.0)/3.0;
     
-    if (wind_tmp > wind_speed)
-      wind_speed = wind_tmp;
-      
+    if (wind_aktuell > wind_speed_max)
+      wind_speed_max = wind_aktuell;
+
+    wind_speed_gmw = wind_speed_gmw - wind_speed_gmw/20 + wind_aktuell/20;
     calcWindspeedSignal = DONE;
     
     //Serial.println(wind_speed);
   }
-  adc2deg();
 
-  server.handleClient();
   yield();
 }
 
