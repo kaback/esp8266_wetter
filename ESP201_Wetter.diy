@@ -590,6 +590,53 @@
       <holeSize reference="../../org.diylc.components.connectivity.SolderPad[26]/holeSize"/>
       <layer>_1</layer>
     </org.diylc.components.connectivity.SolderPad>
+    <org.diylc.components.connectivity.SolderPad>
+      <name>Pad31</name>
+      <size>
+        <value>0.09</value>
+        <unit class="org.diylc.core.measures.SizeUnit">in</unit>
+      </size>
+      <color>
+        <red>0</red>
+        <green>0</green>
+        <blue>0</blue>
+        <alpha>255</alpha>
+      </color>
+      <point x="6.8" y="4.6"/>
+      <type>ROUND</type>
+      <holeSize>
+        <value>0.8</value>
+        <unit class="org.diylc.core.measures.SizeUnit">mm</unit>
+      </holeSize>
+      <layer>_1</layer>
+    </org.diylc.components.connectivity.SolderPad>
+    <org.diylc.components.connectivity.SolderPad>
+      <name>Pad32</name>
+      <size reference="../../org.diylc.components.connectivity.SolderPad[31]/size"/>
+      <color reference="../../org.diylc.components.connectivity.SolderPad[31]/color"/>
+      <point x="6.8" y="4.7"/>
+      <type>ROUND</type>
+      <holeSize reference="../../org.diylc.components.connectivity.SolderPad[31]/holeSize"/>
+      <layer>_1</layer>
+    </org.diylc.components.connectivity.SolderPad>
+    <org.diylc.components.connectivity.SolderPad>
+      <name>Pad33</name>
+      <size reference="../../org.diylc.components.connectivity.SolderPad[31]/size"/>
+      <color reference="../../org.diylc.components.connectivity.SolderPad[31]/color"/>
+      <point x="7.0" y="4.6"/>
+      <type>ROUND</type>
+      <holeSize reference="../../org.diylc.components.connectivity.SolderPad[31]/holeSize"/>
+      <layer>_1</layer>
+    </org.diylc.components.connectivity.SolderPad>
+    <org.diylc.components.connectivity.SolderPad>
+      <name>Pad34</name>
+      <size reference="../../org.diylc.components.connectivity.SolderPad[31]/size"/>
+      <color reference="../../org.diylc.components.connectivity.SolderPad[31]/color"/>
+      <point x="7.0" y="3.8"/>
+      <type>ROUND</type>
+      <holeSize reference="../../org.diylc.components.connectivity.SolderPad[31]/holeSize"/>
+      <layer>_1</layer>
+    </org.diylc.components.connectivity.SolderPad>
     <org.diylc.components.semiconductors.DIL__IC>
       <name>IC1</name>
       <alpha>127</alpha>
@@ -877,6 +924,44 @@
       <display>NAME</display>
       <flipStanding>false</flipStanding>
     </org.diylc.components.connectivity.Jumper>
+    <org.diylc.components.connectivity.Jumper>
+      <name>J7</name>
+      <alpha>127</alpha>
+      <points>
+        <java.awt.Point x="7.0" y="4.6"/>
+        <java.awt.Point x="7.0" y="3.8"/>
+      </points>
+      <bodyColor>
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+        <alpha>255</alpha>
+      </bodyColor>
+      <borderColor reference="../../org.diylc.components.connectivity.SolderPad[31]/color"/>
+      <labelColor reference="../../org.diylc.components.connectivity.SolderPad[31]/color"/>
+      <leadColor>
+        <red>0</red>
+        <green>0</green>
+        <blue>255</blue>
+        <alpha>255</alpha>
+      </leadColor>
+      <display>NAME</display>
+      <flipStanding>false</flipStanding>
+    </org.diylc.components.connectivity.Jumper>
+    <org.diylc.components.connectivity.Jumper>
+      <name>J8</name>
+      <alpha>127</alpha>
+      <points>
+        <java.awt.Point x="6.8" y="4.6"/>
+        <java.awt.Point x="6.8" y="4.7"/>
+      </points>
+      <bodyColor reference="../../org.diylc.components.connectivity.Jumper[7]/bodyColor"/>
+      <borderColor reference="../../org.diylc.components.connectivity.SolderPad[31]/color"/>
+      <labelColor reference="../../org.diylc.components.connectivity.SolderPad[31]/color"/>
+      <leadColor reference="../../org.diylc.components.connectivity.Jumper[7]/leadColor"/>
+      <display>NAME</display>
+      <flipStanding>false</flipStanding>
+    </org.diylc.components.connectivity.Jumper>
     <org.diylc.components.misc.Label>
       <name>L1</name>
       <point x="8.0" y="4.0"/>
@@ -884,19 +969,11 @@
       <font>
         <attributes>
           <entry>
-            <awt-text-attribute>posture</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>tracking</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
             <awt-text-attribute>size</awt-text-attribute>
             <float>14.0</float>
           </entry>
           <entry>
-            <awt-text-attribute>superscript</awt-text-attribute>
+            <awt-text-attribute>tracking</awt-text-attribute>
             <null/>
           </entry>
           <entry>
@@ -908,12 +985,20 @@
             <string>Tahoma</string>
           </entry>
           <entry>
+            <awt-text-attribute>weight</awt-text-attribute>
+            <float>2.0</float>
+          </entry>
+          <entry>
+            <awt-text-attribute>posture</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
             <awt-text-attribute>transform</awt-text-attribute>
             <null/>
           </entry>
           <entry>
-            <awt-text-attribute>weight</awt-text-attribute>
-            <float>2.0</float>
+            <awt-text-attribute>superscript</awt-text-attribute>
+            <null/>
           </entry>
         </attributes>
       </font>
@@ -930,19 +1015,11 @@
       <font>
         <attributes>
           <entry>
-            <awt-text-attribute>posture</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>tracking</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
             <awt-text-attribute>size</awt-text-attribute>
             <float>14.0</float>
           </entry>
           <entry>
-            <awt-text-attribute>superscript</awt-text-attribute>
+            <awt-text-attribute>tracking</awt-text-attribute>
             <null/>
           </entry>
           <entry>
@@ -954,12 +1031,20 @@
             <string>Tahoma</string>
           </entry>
           <entry>
+            <awt-text-attribute>weight</awt-text-attribute>
+            <float>2.0</float>
+          </entry>
+          <entry>
+            <awt-text-attribute>posture</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
             <awt-text-attribute>transform</awt-text-attribute>
             <null/>
           </entry>
           <entry>
-            <awt-text-attribute>weight</awt-text-attribute>
-            <float>2.0</float>
+            <awt-text-attribute>superscript</awt-text-attribute>
+            <null/>
           </entry>
         </attributes>
       </font>
@@ -976,19 +1061,11 @@
       <font>
         <attributes>
           <entry>
-            <awt-text-attribute>posture</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>tracking</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
             <awt-text-attribute>size</awt-text-attribute>
             <float>14.0</float>
           </entry>
           <entry>
-            <awt-text-attribute>superscript</awt-text-attribute>
+            <awt-text-attribute>tracking</awt-text-attribute>
             <null/>
           </entry>
           <entry>
@@ -1000,12 +1077,20 @@
             <string>Tahoma</string>
           </entry>
           <entry>
+            <awt-text-attribute>weight</awt-text-attribute>
+            <float>2.0</float>
+          </entry>
+          <entry>
+            <awt-text-attribute>posture</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
             <awt-text-attribute>transform</awt-text-attribute>
             <null/>
           </entry>
           <entry>
-            <awt-text-attribute>weight</awt-text-attribute>
-            <float>2.0</float>
+            <awt-text-attribute>superscript</awt-text-attribute>
+            <null/>
           </entry>
         </attributes>
       </font>
@@ -1022,19 +1107,11 @@
       <font>
         <attributes>
           <entry>
-            <awt-text-attribute>posture</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>tracking</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
             <awt-text-attribute>size</awt-text-attribute>
             <float>14.0</float>
           </entry>
           <entry>
-            <awt-text-attribute>superscript</awt-text-attribute>
+            <awt-text-attribute>tracking</awt-text-attribute>
             <null/>
           </entry>
           <entry>
@@ -1046,12 +1123,20 @@
             <string>Tahoma</string>
           </entry>
           <entry>
+            <awt-text-attribute>weight</awt-text-attribute>
+            <float>2.0</float>
+          </entry>
+          <entry>
+            <awt-text-attribute>posture</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
             <awt-text-attribute>transform</awt-text-attribute>
             <null/>
           </entry>
           <entry>
-            <awt-text-attribute>weight</awt-text-attribute>
-            <float>2.0</float>
+            <awt-text-attribute>superscript</awt-text-attribute>
+            <null/>
           </entry>
         </attributes>
       </font>
@@ -1068,19 +1153,11 @@
       <font>
         <attributes>
           <entry>
-            <awt-text-attribute>posture</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>tracking</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
             <awt-text-attribute>size</awt-text-attribute>
             <float>14.0</float>
           </entry>
           <entry>
-            <awt-text-attribute>superscript</awt-text-attribute>
+            <awt-text-attribute>tracking</awt-text-attribute>
             <null/>
           </entry>
           <entry>
@@ -1092,11 +1169,19 @@
             <string>Tahoma</string>
           </entry>
           <entry>
+            <awt-text-attribute>weight</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
+            <awt-text-attribute>posture</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
             <awt-text-attribute>transform</awt-text-attribute>
             <null/>
           </entry>
           <entry>
-            <awt-text-attribute>weight</awt-text-attribute>
+            <awt-text-attribute>superscript</awt-text-attribute>
             <null/>
           </entry>
         </attributes>
@@ -1125,19 +1210,11 @@
       <font>
         <attributes>
           <entry>
-            <awt-text-attribute>posture</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>tracking</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
             <awt-text-attribute>size</awt-text-attribute>
             <float>14.0</float>
           </entry>
           <entry>
-            <awt-text-attribute>superscript</awt-text-attribute>
+            <awt-text-attribute>tracking</awt-text-attribute>
             <null/>
           </entry>
           <entry>
@@ -1149,12 +1226,20 @@
             <string>Tahoma</string>
           </entry>
           <entry>
+            <awt-text-attribute>weight</awt-text-attribute>
+            <float>2.0</float>
+          </entry>
+          <entry>
+            <awt-text-attribute>posture</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
             <awt-text-attribute>transform</awt-text-attribute>
             <null/>
           </entry>
           <entry>
-            <awt-text-attribute>weight</awt-text-attribute>
-            <float>2.0</float>
+            <awt-text-attribute>superscript</awt-text-attribute>
+            <null/>
           </entry>
         </attributes>
       </font>
@@ -1176,19 +1261,11 @@
       <font>
         <attributes>
           <entry>
-            <awt-text-attribute>posture</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
-            <awt-text-attribute>tracking</awt-text-attribute>
-            <null/>
-          </entry>
-          <entry>
             <awt-text-attribute>size</awt-text-attribute>
             <float>14.0</float>
           </entry>
           <entry>
-            <awt-text-attribute>superscript</awt-text-attribute>
+            <awt-text-attribute>tracking</awt-text-attribute>
             <null/>
           </entry>
           <entry>
@@ -1200,12 +1277,20 @@
             <string>Tahoma</string>
           </entry>
           <entry>
+            <awt-text-attribute>weight</awt-text-attribute>
+            <float>2.0</float>
+          </entry>
+          <entry>
+            <awt-text-attribute>posture</awt-text-attribute>
+            <null/>
+          </entry>
+          <entry>
             <awt-text-attribute>transform</awt-text-attribute>
             <null/>
           </entry>
           <entry>
-            <awt-text-attribute>weight</awt-text-attribute>
-            <float>2.0</float>
+            <awt-text-attribute>superscript</awt-text-attribute>
+            <null/>
           </entry>
         </attributes>
       </font>
